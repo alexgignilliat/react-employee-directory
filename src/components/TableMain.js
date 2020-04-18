@@ -24,18 +24,80 @@ class TableMain extends Component {
                         key: i
                     })
                     )
-                }
-                )
+                })
             })
+    };
+
+    filterResults = (results) => {
+        const value = this.state.search
+        const finalResult = results.filter((employee) => {
+            const lastName = employee.lastName.toLowerCase();
+            const firstName = employee.firstName.toLowerCase()
+            const fullName = firstName + " " + lastName
+
+            if (fullName.includes(value)) {
+                return employee
+            }
+        });
+
+        return finalResult
+    };
+
+    sortResults = (event) => {
+        const results = this.state.result
+        // const id = event.target.id
+        // if (id === 'name'){
+        // } else if (id === 'phone'){
+        // } else if (id === 'email'){
+        // }
+        if (this.state.sortOrder === "descending") {
+            results.sort((a, b) => {
+                if (a.firstName > b.firstName) {
+                    return -1
+                }
+                return a.firstName > b.firstName ? 1 : 0
+            }, 
+            this.setState({ sortOrder: "ascending" }))
+        } else if (this.state.sortOrder === "ascending") {
+            results.sort((a, b) => {
+                if (a.firstName < b.firstName) {
+                    return -1
+                }
+                return a.firstName > b.firstName ? 1 : 0
+            }, 
+            this.setState({ sortOrder: "descending" }))
+        }
+        
+        console.log("RESULTS: ", results)
+
+        this.setState({
+            sortedResults: results,
+            isSorted: true
+        })
     }
 
     onChange = e => {
-        this.setState({ search: e.target.value })
+        const value = e.target.value;
+        if (!value) {
+            this.setState({ isSearchEmpty: true });
+        } else {
+            this.setState({ search: e.target.value, isSearchEmpty: false });
+        }
     }
 
-
-
     render() {
+        console.log("State", this.state)
+        let employeeResults = this.state.result || []
+
+        if (this.state.isSearchEmpty) {
+            employeeResults = this.state.result
+        } else {
+            employeeResults = this.filterResults(this.state.result)
+        }
+
+        if (this.state.isSorted) {
+            employeeResults = this.state.sortedResults
+        }
 
         return (
             <div>
@@ -45,12 +107,12 @@ class TableMain extends Component {
                         <tbody>
                             <tr>
                                 <th>Image</th>
-                                <th  id="name">Name</th>
+                                <th style={{ cursor: "pointer" }} onClick={this.sortResults} id="name">Name</th>
                                 <th id="phone">Phone</th>
                                 <th id="email">Email</th>
                                 <th id="dob">DOB</th>
                             </tr>
-                            {[...this.state.result].map((item) =>
+                            {[...employeeResults].map((item) =>
                                 <EmployeeRow
                                     image={item.image}
                                     firstName={item.firstName}
@@ -64,10 +126,8 @@ class TableMain extends Component {
                         </tbody>
                     </table>
                 </div>
-                        
             </div>
-        )
-    }
+        )}
 }
 
 

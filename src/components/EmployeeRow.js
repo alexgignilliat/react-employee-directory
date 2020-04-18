@@ -3,12 +3,12 @@ import React from "react";
 function EmployeeRow(props) {
 
     return (
-        <tr>
-            <td><img alt={"Employee"} src={props.image} /></td>
-            <td>{props.firstName + " " + props.lastName}</td>
-            <td>{props.phone}</td>
-            <td>{props.email}</td>
-            <td>{props.dob}</td>
+        <tr style={{border: "1px grey solid", borderRadius: "5px"}}>
+            <td style={{backgroundColor: "white", padding: 10}} ><img alt={"Employee"} style={{borderRadius: "5px"}} src={props.image} /></td>
+            <td style={{backgroundColor: "white", padding: 10}}>{props.firstName + " " + props.lastName}</td>
+            <td style={{backgroundColor: "white", padding: 10}}>{props.phone}</td>
+            <td style={{backgroundColor: "white", padding: 10}}>{props.email}</td>
+            <td style={{backgroundColor: "white", padding: 10}}>{props.dob}</td>
         </tr>
     )
 }
