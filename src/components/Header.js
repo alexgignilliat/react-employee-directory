@@ -1,4 +1,5 @@
 import React from "react";
+import "../style.css"
 
 function Header(){
     return (
@@ -8,7 +9,6 @@ function Header(){
             color: "white", 
             width: "100%",
             height: "5rem",
-            backgroundColor: "#567b99",
             textAlign: "center",
             paddingTop: "10px",
             borderRadius: "5px"

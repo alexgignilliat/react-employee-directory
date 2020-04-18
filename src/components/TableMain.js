@@ -4,116 +4,94 @@ import EmployeeRow from "./EmployeeRow"
 
 class TableMain extends Component {
     state = {
-        result: [],
-        displayResults: [],
-        search: "",
-        sortOrder: "descending"
-    }
+        originalResults: [],
+        displayResults: []
+    };
 
     componentDidMount() {
-        API.search()
-            .then(results => {
-                console.log(results)
-                this.setState({
-                    result: results.data.results.map((res, i) => ({
-                        image: res.picture.large,
-                        firstName: res.name.first,
-                        lastName: res.name.last,
-                        phone: res.phone,
-                        email: res.email,
-                        dob: res.dob.date,
-                        key: i
-                    })
-                    )
-                })
-            })
-    };
+        API.search().then(results => {
+            const tableData = results.data.results.map((res, i) => ({
+                image: res.picture.large,
+                firstName: res.name.first,
+                lastName: res.name.last,
+                phone: res.phone,
+                email: res.email,
+                dob: res.dob.date.slice(0,10),
+                key: i
+            }));
 
-    filterResults = (results) => {
-        const value = this.state.search
-        const finalResult = results.filter((employee) => {
-            const lastName = employee.lastName.toLowerCase();
-            const firstName = employee.firstName.toLowerCase()
-            const fullName = firstName + " " + lastName
 
-            if (fullName.includes(value)) {
-                return employee
-            }
+
+            this.setState({ originalResults: tableData, displayResults: tableData });
         });
+    }
 
-        return finalResult
+    filterResults = (query, results) => {
+        return results.filter(employee => {
+            const lastName = employee.lastName.toLowerCase();
+            const firstName = employee.firstName.toLowerCase();
+            const fullName = firstName + " " + lastName;
+
+            return fullName.includes(query);
+        });
     };
 
-    sortResults = (event) => {
-        const results = this.state.result
-        // const id = event.target.id
-        // if (id === 'name'){
-        // } else if (id === 'phone'){
-        // } else if (id === 'email'){
-        // }
-        if (this.state.sortOrder === "descending") {
-            results.sort((a, b) => {
-                if (a.firstName > b.firstName) {
-                    return -1
-                }
-                return a.firstName > b.firstName ? 1 : 0
-            }, 
-            this.setState({ sortOrder: "ascending" }))
-        } else if (this.state.sortOrder === "ascending") {
-            results.sort((a, b) => {
-                if (a.firstName < b.firstName) {
-                    return -1
-                }
-                return a.firstName > b.firstName ? 1 : 0
-            }, 
-            this.setState({ sortOrder: "descending" }))
-        }
-        
-        console.log("RESULTS: ", results)
+    sortResults = event => {
+        this.setState(prevState => {
+            const { displayResults, sortOrder } = prevState;
 
-        this.setState({
-            sortedResults: results,
-            isSorted: true
-        })
-    }
+            if (sortOrder === "descending") {
+                displayResults.sort((a, b) => {
+                    if (a.firstName > b.firstName) {
+                        return -1;
+                    }
+                    return a.firstName > b.firstName ? 1 : 0;
+                });
+            } else {
+                displayResults.sort((a, b) => {
+                    if (a.firstName < b.firstName) {
+                        return -1;
+                    }
+                    return a.firstName > b.firstName ? 1 : 0;
+                });
+            }
+
+            return {
+                displayResults,
+                sortOrder: sortOrder === "descending" ? "ascending" : "descending"
+            };
+        });
+    };
 
     onChange = e => {
-        const value = e.target.value;
-        if (!value) {
-            this.setState({ isSearchEmpty: true });
-        } else {
-            this.setState({ search: e.target.value, isSearchEmpty: false });
-        }
-    }
+        const query = e.target.value;
+
+        this.setState(prevState => ({
+            displayResults:
+                query.length > 0
+                    ? this.filterResults(query, prevState.originalResults)
+                    : prevState.originalResults
+        }));
+    };
 
     render() {
-        // console.log("State", this.state)
-        let employeeResults = this.state.result 
-
-        if (this.state.isSearchEmpty) {
-            employeeResults = this.state.result
-        } else {
-            employeeResults = this.filterResults(this.state.result)
-        }
-
-        if (this.state.isSorted) {
-            employeeResults = this.state.sortedResults
-        }
-
         return (
             <div>
-                <input label="Search" onChange={this.onChange} />
+                <p style={{ color: "white" }}>Searh Employee by name:<br/>
+                <input label="Search" onChange={this.onChange} /></p>
                 <div className="row">
                     <table style={{ width: "100%" }}>
                         <tbody>
                             <tr>
                                 <th>Image</th>
-                                <th style={{ cursor: "pointer" }} onClick={this.sortResults} id="name">Name</th>
+                                <th style={{ cursor: "pointer" }} onClick={this.sortResults} id="name">
+                                    Name
+                                </th>
                                 <th id="phone">Phone</th>
                                 <th id="email">Email</th>
                                 <th id="dob">DOB</th>
                             </tr>
-                            {[...employeeResults].map((item) =>
+                            {this.state.displayResults.map(item => (
                                 <EmployeeRow
                                     image={item.image}
                                     firstName={item.firstName}
@@ -123,13 +101,13 @@ class TableMain extends Component {
                                     dob={item.dob}
                                     key={item.key}
                                 />
-                            )}
+                            ))}
                         </tbody>
                     </table>
                 </div>
             </div>
-        )}
+        );
+    }
 }
-
 
 export default TableMain;
