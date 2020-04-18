@@ -5,6 +5,7 @@ import EmployeeRow from "./EmployeeRow"
 class TableMain extends Component {
     state = {
         result: [],
+        displayResults: [],
         search: "",
         sortOrder: "descending"
     }
@@ -86,8 +87,8 @@ class TableMain extends Component {
     }
 
     render() {
-        console.log("State", this.state)
-        let employeeResults = this.state.result || []
+        // console.log("State", this.state)
+        let employeeResults = this.state.result 
 
         if (this.state.isSearchEmpty) {
             employeeResults = this.state.result
