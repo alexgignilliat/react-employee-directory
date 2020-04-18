@@ -6,7 +6,7 @@ This is an employee directory created with React. This was a huge learning exper
 
 ## Installation
 
-Clone to your local machine and open in your favorite code editor to check it out! Or visit the deployed version at: [Employee Directory on GitHub Pages](https://alexgignilliat.github.io/Weather-Dashboard/)
+Clone to your local machine and open in your favorite code editor to check it out! Or visit the deployed version at: [Employee Directory on GitHub Pages](https://alexgignilliat.github.io/react-employee-directory/)
 
 ## Technologies Utilized
 
